@@ -1,31 +1,35 @@
-FROM debian:jessie
+FROM debian:stretch
 
-MAINTAINER Cristian Lucchesi "cristian.lucchesi@gmail.com"
+LABEL maintainer=anusha.ranganathan@cottagelabs.com
+LABEL description="Docker for NGinx compiled with the modules nginx-http-shibboleth and headers-more-nginx producing the debian packages for Debian Stretch"
 
-RUN echo "deb http://nginx.org/packages/debian/ jessie nginx" >> /etc/apt/sources.list && \
-    echo "deb-src http://nginx.org/packages/debian/ jessie nginx" >> /etc/apt/sources.list
-    
+RUN echo "deb http://nginx.org/packages/debian/ stretch nginx" >> /etc/apt/sources.list && \
+    echo "deb-src http://nginx.org/packages/debian/ stretch nginx" >> /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get install -y dpkg-dev wget git
 
-RUN wget http://nginx.org/keys/nginx_signing.key && \ 
+RUN wget http://nginx.org/keys/nginx_signing.key && \
     apt-key add nginx_signing.key && \
     apt-get update
-    
+
 RUN mkdir /opt/rebuildnginx && mkdir /opt/rebuildnginx/debs && \
     cd /opt/rebuildnginx && \
     apt-get source nginx && apt-get build-dep -y nginx && \
     git clone https://github.com/nginx-shib/nginx-http-shibboleth.git && \
     git clone https://github.com/openresty/headers-more-nginx-module.git
-    
-#RUN dpkg-buildpackage -b
-#RUN apt-get install vim
+
+# RUN dpkg-buildpackage -b
+# RUN apt-get install vim
     #rm -rf /var/lib/apt/lists/* && \
 
-WORKDIR /opt/rebuildnginx/nginx-1.8.0
+WORKDIR /opt/rebuildnginx/nginx-1.14.0
 
-COPY buildpackage.sh /opt/rebuildnginx/nginx-1.8.0/
-RUN sed -i 's,--with-ipv6,--with-ipv6 --add-module=/opt/rebuildnginx/nginx-http-shibboleth --add-module=/opt/rebuildnginx/headers-more-nginx-module,g' debian/rules
+COPY buildpackage.sh /opt/rebuildnginx/nginx-1.14.0/
+
+RUN chmod a+x /opt/rebuildnginx/nginx-1.14.0/buildpackage.sh
+
+RUN sed -i 's,--with-mail_ssl_module,--with-mail_ssl_module --with-ipv6 --add-module=/opt/rebuildnginx/nginx-http-shibboleth --add-module=/opt/rebuildnginx/headers-more-nginx-module,g' debian/rules
 
 VOLUME ["/opt/rebuildnginx"]
 
