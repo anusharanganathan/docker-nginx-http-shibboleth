@@ -18,10 +18,15 @@ The latest certbot packages from Stretch backports
 # Docker Image
 
 The docker images is available through the docker hub at
-https://registry.hub.docker.com/u/criluc/docker-nginx-http-shibboleth/.
+https://registry.hub.docker.com/u/anusha3/nginx-shibboleth-certbot/.
 
 For example:
 
 ```
-docker pull criluc/docker-nginx-http-shibboleth
+docker pull anusha3/nginx-shibboleth-certbot:1.0
+```
+
+# To build the docker image
+```
+docker build -t anusha3/nginx-shibboleth-certbot:1.0
 ```
