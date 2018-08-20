@@ -24,12 +24,12 @@ COPY start-shibd.sh /
 RUN echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y python-certbot-nginx -t stretch-backports
-RUN apt-get install -y cron
+RUN apt-get install -y cron apache2-utils openssl gettext-base
 
 RUN chmod +x /start-shibd.sh
 
-# supervisor needs nginx starting in Foreground
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+# supervisor needs nginx starting in Foreground. This can be set while running NGinx
+# RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 VOLUME ["/var/cache/nginx"]
 
